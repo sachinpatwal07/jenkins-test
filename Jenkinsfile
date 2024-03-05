@@ -10,7 +10,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    docker.build "${IMAGE_NAME}:${BUILD_NUMBER} ."
+                    docker.build "${IMAGE_NAME}:${BUILD_NUMBER}"
                 }
             }
         }
@@ -18,7 +18,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com/v2/', "sachinpatwal30") {
+                    docker.withRegistry('https://registry.hub.docker.com/v2/', "sachin-docker") {
                         docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
                     }
                 }
