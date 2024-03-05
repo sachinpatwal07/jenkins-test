@@ -1,16 +1,37 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('sachin-docker')
+        IMAGE_NAME = "sachinpatwal30/my_node_app"
+    }
+
     stages {
-        stage('Build') {
+        stage('Build Image') {
             steps {
-                echo 'hello from build stage'
+                script {
+                    docker.build "${IMAGE_NAME}:${BUILD_NUMBER}"
+                }
             }
         }
 
-        stage('Test') {
+        stage('Push Image') {
             steps {
-                echo 'hello from test stage'
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com/v2/', "sachin-docker") {
+                        docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
+                    }
+                }
+            }
+        }
+    }
+      post {
+        always {
+            sh "docker logout"
+        }
+        success {
+            script  {
+               cleanWs()
             }
         }
     }
