@@ -10,7 +10,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    def customImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}")
+                    docker.build "${IMAGE_NAME}:${BUILD_NUMBER}"
                 }
             }
         }
@@ -18,9 +18,8 @@ pipeline {
         stage('Push Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com/v2/', 'sachin-docker') {
-                        def customImage = docker.image("${IMAGE_NAME}:${BUILD_NUMBER}")
-                        customImage.push()
+                    docker.withRegistry('https://registry.hub.docker.com/v2/', "sachin-docker") {
+                        docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
                     }
                 }
             }
@@ -32,8 +31,8 @@ pipeline {
             sh "docker logout"
         }
         success {
-            script {
-                cleanWs()
+            script  {
+               cleanWs()
             }
         }
     }
